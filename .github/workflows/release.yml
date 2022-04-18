@@ -146,24 +146,24 @@ jobs:
 
       - name: publish to github packages
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" `
-            --name "github" `
-            --username ${{ env.releaseGitHubUserName }} `
-            --password ${{ secrets.GH_PACKAGES_PAT }} `
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" \
+            --name "github" \
+            --username ${{ env.releaseGitHubUserName }} \
+            --password ${{ secrets.GH_PACKAGES_PAT }} \
             --store-password-in-clear-text
-          dotnet nuget push "${{ env.artifactName }}/*.nupkg" `
-            --api-key ${{secrets.GH_PACKAGES_PAT}} `
-            --source "github" `
+          dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
+            --api-key ${{secrets.GH_PACKAGES_PAT}} \
+            --source "github" \
             --skip-duplicate
 
       - name: publish to nuget.org
         run: |
-          dotnet nuget add source "https://api.nuget.org/v3/index.json" `
-            --name "nuget.org" `
-            --username ${{ env.releaseNugetUserName }} `
-            --password ${{ secrets.NUGET_PACKAGE_PAT }} `
+          dotnet nuget add source "https://api.nuget.org/v3/index.json" \
+            --name "nuget.org" \
+            --username ${{ env.releaseNugetUserName }} \
+            --password ${{ secrets.NUGET_PACKAGE_PAT }} \
             --store-password-in-clear-text
-          dotnet nuget push "${{ env.artifactName }}/*.nupkg" `
-            --api-key ${{secrets.NUGET_PACKAGE_PAT}} `
-            --source "nuget.org" `
+          dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
+            --api-key ${{secrets.NUGET_PACKAGE_PAT}} \
+            --source "nuget.org" \
             --skip-duplicate
