@@ -146,9 +146,9 @@ jobs:
 
       - name: publish to github packages
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" \
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGithubUserName }}/index.json" \
             --name "github" \
-            --username "${{ env.releaseGitHubUserName }}" \
+            --username "${{ env.releaseGithubUserName }}" \
             --password "${{ secrets.GH_PACKAGES_PAT }}" \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
