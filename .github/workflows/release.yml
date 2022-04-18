@@ -145,6 +145,7 @@ jobs:
           asset_content_type: 'application/zip'
 
       - name: publish to github packages
+        shell: bash
         run: |
           dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGithubUserName }}/index.json" \
             --name "github" \
@@ -155,17 +156,11 @@ jobs:
             --api-key "${{secrets.GH_PACKAGES_PAT}}" \
             --source "github" \
             --skip-duplicate
-          dotnet nuget remove source "github"
 
       - name: publish to nuget.org
+        shell: bash
         run: |
-          dotnet nuget add source "https://api.nuget.org/v3/index.json" \
-            --name "nuget.org" \
-            --username "${{ env.releaseNugetUserName }}" \
-            --password "${{ secrets.NUGET_PACKAGE_PAT }}" \
-            --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
             --api-key "${{secrets.NUGET_PACKAGE_PAT}}" \
             --source "https://api.nuget.org/v3/index.json" \
             --skip-duplicate
-          dotnet nuget remove source "nuget.org"
