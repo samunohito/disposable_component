@@ -148,11 +148,11 @@ jobs:
         run: |
           dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" \
             --name "github" \
-            --username ${{ env.releaseGitHubUserName }} \
-            -p ${{ secrets.GH_PACKAGES_PAT }} \
+            --username "${{ env.releaseGitHubUserName }}" \
+            --password "${{ secrets.GH_PACKAGES_PAT }}" \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
-            --api-key ${{secrets.GH_PACKAGES_PAT}} \
+            --api-key "${{secrets.GH_PACKAGES_PAT}}" \
             --source "github" \
             --skip-duplicate
 
@@ -160,10 +160,10 @@ jobs:
         run: |
           dotnet nuget add source "https://api.nuget.org/v3/index.json" \
             --name "nuget.org" \
-            --username ${{ env.releaseNugetUserName }} \
-            -p ${{ secrets.NUGET_PACKAGE_PAT }} \
+            --username "${{ env.releaseNugetUserName }} \
+            --password "${{ secrets.NUGET_PACKAGE_PAT }}" \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
-            --api-key ${{secrets.NUGET_PACKAGE_PAT}} \
+            --api-key "${{secrets.NUGET_PACKAGE_PAT}}" \
             --source "nuget.org" \
             --skip-duplicate
