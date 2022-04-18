@@ -80,10 +80,10 @@ jobs:
       - id: vars
         shell: bash
         run: |
-          if { [ "${{ needs.build-artifact.outputs.prereleaseVersionNoLeadingHyphen }}" = "beta" ] } || { [ "${{ needs.build-artifact.outputs.prereleaseVersionNoLeadingHyphen }}" = "alpha" ] }; then
-            echo "::set-output name=isPrerelease::true";
+          if [ "${{ needs.build-artifact.outputs.prereleaseVersionNoLeadingHyphen }}" = "beta" ] || [ "${{ needs.build-artifact.outputs.prereleaseVersionNoLeadingHyphen }}" = "alpha" ]; then
+            echo "::set-output name=isPrerelease::true"
           else
-            echo "::set-output name=isPrerelease::false";
+            echo "::set-output name=isPrerelease::false"
           fi;
         
       - id: create-release
