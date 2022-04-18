@@ -12,7 +12,8 @@ env:
   buildPlatformName: Any CPU
   pathOfSolution: ${{ github.workspace }}\disposable_component.sln
   pathOfVersioning: ${{ github.workspace }}\DisposableComponent
-  releaseUserName: samunohito
+  releaseGithubUserName: samunohito
+  releaseNugetUserName: sam_osamu
 
 jobs:
   build-artifact:
@@ -86,7 +87,7 @@ jobs:
           else
             echo "::set-output name=isPrerelease::false"
           fi;
-        
+
       - id: create-release
         uses: actions/create-release@v1
         env:
@@ -145,5 +146,24 @@ jobs:
 
       - name: publish to github packages
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseUserName }}/index.json" -n "github" -u ${{ env.releaseUserName }} -p ${{ secrets.GH_PACKAGES_PAT }} --store-password-in-clear-text
-          dotnet nuget push "${{ env.artifactName }}/*.nupkg" --api-key ${{secrets.GH_PACKAGES_PAT}} --source "github" --skip-duplicate
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" `
+            --name "github" `
+            --username ${{ env.releaseGitHubUserName }} `
+            --password ${{ secrets.GH_PACKAGES_PAT }} `
+            --store-password-in-clear-text
+          dotnet nuget push "${{ env.artifactName }}/*.nupkg" `
+            --api-key ${{secrets.GH_PACKAGES_PAT}} `
+            --source "github" `
+            --skip-duplicate
+
+      - name: publish to nuget.org
+        run: |
+          dotnet nuget add source "https://api.nuget.org/v3/index.json" `
+            --name "nuget.org" `
+            --username ${{ env.releaseNugetUserName }} `
+            --password ${{ secrets.NUGET_PACKAGE_PAT }} `
+            --store-password-in-clear-text
+          dotnet nuget push "${{ env.artifactName }}/*.nupkg" `
+            --api-key ${{secrets.NUGET_PACKAGE_PAT}} `
+            --source "nuget.org" `
+            --skip-duplicate
