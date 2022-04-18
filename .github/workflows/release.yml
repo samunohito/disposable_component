@@ -160,7 +160,7 @@ jobs:
         run: |
           dotnet nuget add source "https://api.nuget.org/v3/index.json" \
             --name "nuget.org" \
-            --username "${{ env.releaseNugetUserName }} \
+            --username "${{ env.releaseNugetUserName }}" \
             --password "${{ secrets.NUGET_PACKAGE_PAT }}" \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
