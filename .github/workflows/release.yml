@@ -12,6 +12,7 @@ env:
   buildPlatformName: Any CPU
   pathOfSolution: ${{ github.workspace }}\disposable_component.sln
   pathOfVersioning: ${{ github.workspace }}\DisposableComponent
+  releaseUserName: samunohito
 
 jobs:
   build-artifact:
@@ -141,3 +142,8 @@ jobs:
           asset_path: ./${{ env.artifactName }}.zip
           asset_name: ${{ env.artifactName }}.zip
           asset_content_type: 'application/zip'
+
+      - name: publish to github packages
+        run: |
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseUserName }}/index.json" -n "github" -u ${{ env.releaseUserName }} -p ${{ secrets.GH_PACKAGES_PAT }} --store-password-in-clear-text
+          dotnet nuget push "*.nupkg" --api-key ${{secrets.GH_PACKAGES_PAT}} --source "github" --skip-duplicate
