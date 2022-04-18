@@ -155,6 +155,7 @@ jobs:
             --api-key "${{secrets.GH_PACKAGES_PAT}}" \
             --source "github" \
             --skip-duplicate
+          dotnet nuget remove source "github"
 
       - name: publish to nuget.org
         run: |
@@ -165,5 +166,6 @@ jobs:
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
             --api-key "${{secrets.NUGET_PACKAGE_PAT}}" \
-            --source "nuget.org" \
+            --source "https://api.nuget.org/v3/index.json" \
             --skip-duplicate
+          dotnet nuget remove source "nuget.org"
