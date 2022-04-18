@@ -149,7 +149,7 @@ jobs:
           dotnet nuget add source "https://nuget.pkg.github.com/${{ env.releaseGitHubUserName }}/index.json" \
             --name "github" \
             --username ${{ env.releaseGitHubUserName }} \
-            --password ${{ secrets.GH_PACKAGES_PAT }} \
+            -p ${{ secrets.GH_PACKAGES_PAT }} \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
             --api-key ${{secrets.GH_PACKAGES_PAT}} \
@@ -161,7 +161,7 @@ jobs:
           dotnet nuget add source "https://api.nuget.org/v3/index.json" \
             --name "nuget.org" \
             --username ${{ env.releaseNugetUserName }} \
-            --password ${{ secrets.NUGET_PACKAGE_PAT }} \
+            -p ${{ secrets.NUGET_PACKAGE_PAT }} \
             --store-password-in-clear-text
           dotnet nuget push "${{ env.artifactName }}/*.nupkg" \
             --api-key ${{secrets.NUGET_PACKAGE_PAT}} \
