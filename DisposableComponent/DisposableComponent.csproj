@@ -3,7 +3,11 @@
     <PropertyGroup>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <TargetFrameworks>net48;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+        <PackageId>DisposableComponent</PackageId>
+        <OutputType>Library</OutputType>
+        <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <Authors>samunohito</Authors>
+        <RepositoryUrl>https://github.com/samunohito/disposable_component</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
