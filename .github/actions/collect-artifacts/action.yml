@@ -20,8 +20,23 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: collect apps 
+    - name: collect zip contents
       uses: actions/upload-artifact@v2
       with:
         name: ${{ inputs.artifactName }}
         path: ${{ github.workspace }}\${{ inputs.applicationName }}\bin\${{ inputs.buildConfiguration }}
+
+    - name: create nuget contents
+      shell: pwsh
+      run: |
+        dotnet pack `
+          --configuration ${{ inputs.buildConfiguration }} `
+          --include-source `
+          --output ${{ github.workspace }}\artifacts `
+          .\${{ inputs.applicationName }}\${{ inputs.applicationName }}.csproj 
+
+    - name: collect nuget contents
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ inputs.artifactName }}
+        path: ${{ github.workspace }}\artifacts\${{ inputs.applicationName }}.${{ inputs.applicationVersion }}.nupkg
