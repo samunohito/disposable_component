@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DisposableComponent
+namespace DisposableComponents
 {
     /// <summary>
     /// Arguments for events related to <see cref="IDisposableComponent"/>.

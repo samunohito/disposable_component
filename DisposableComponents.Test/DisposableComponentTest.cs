@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 
-namespace DisposableComponent.Test
+namespace DisposableComponents.Test
 {
     public class DisposableComponentTest
     {
