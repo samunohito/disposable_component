@@ -67,9 +67,16 @@ public class SampleDisposable : DisposableComponent
 
 # Installation
 
+See NuGet or GitHub for the latest version.
+
+for PackageManager
 ```shell
-# See NuGet or GitHub for the latest version.
-Install-Package DisposableComponent -Version 1.0.21
+Install-Package DisposableComponent -Version 1.0.27
+```
+
+for dotnet
+```shell
+dotnet add PROJECT package DisposableComponent --version 1.0.27
 ```
 
 # Licence
