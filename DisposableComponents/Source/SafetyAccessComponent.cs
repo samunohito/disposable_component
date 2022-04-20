@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace DisposableComponents
 {
@@ -8,6 +9,21 @@ namespace DisposableComponents
     /// <seealso cref="DisposableComponent"/>
     public abstract class SafetyAccessComponent : DisposableComponent
     {
+        /// <summary>
+        /// ctor.
+        /// </summary>
+        protected SafetyAccessComponent() : base()
+        {
+        }
+
+        /// <summary>
+        /// ctor.
+        /// </summary>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        protected SafetyAccessComponent(LockRecursionPolicy lockRecursionPolicy) : base(lockRecursionPolicy)
+        {
+        }
+
         /// <summary>
         /// Assists in safely reading values from the reader.
         /// If this object is destroyed, the value of <see cref="defaultValue"/> is returned.
