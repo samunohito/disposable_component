@@ -18,7 +18,7 @@ namespace DisposableComponent
         public event EventHandler<DisposableComponentEventArgs> Disposed;
 
         private readonly ReaderWriterLockSlim _lock;
-        private readonly ConcurrentDisposableCollection<IDisposable> _disposables;
+        private readonly DisposableCollection<IDisposable> _disposables;
 
         /// <summary>
         /// ctor.
@@ -26,12 +26,13 @@ namespace DisposableComponent
         protected DisposableComponent()
         {
             _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-            _disposables = new ConcurrentDisposableCollection<IDisposable>();
+            _disposables = new DisposableCollection();
             IsDisposed = false;
         }
 
         ~DisposableComponent()
         {
+            Dispose();
             _lock.Dispose();
         }
 
@@ -74,10 +75,8 @@ namespace DisposableComponent
         /// <inheritdoc cref="IDisposableComponent.Dispose"/>
         public void Dispose()
         {
-            try
+            _lock.WriteLockScope(() =>
             {
-                _lock.EnterWriteLock();
-
                 if (IsDisposed)
                 {
                     return;
@@ -88,20 +87,11 @@ namespace DisposableComponent
 
                 IsDisposed = true;
 
-                foreach (var disposable in _disposables)
-                {
-                    disposable.Dispose();
-                }
-
                 _disposables.Dispose();
 
                 OnDisposed();
                 Disposed?.Invoke(this, new DisposableComponentEventArgs(this));
-            }
-            finally
-            {
-                _lock.ExitWriteLock();
-            }
+            });
         }
 
         /// <inheritdoc cref="IDisposableComponent.Dispose"/>
