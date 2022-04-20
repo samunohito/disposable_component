@@ -14,7 +14,7 @@
         <Copyright>Copyright (c) 2022 samunohito</Copyright>
         <PackageProjectUrl>https://github.com/samunohito/disposable_component</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/samunohito/disposable_component/blob/develop/LICENSE.md</PackageLicenseUrl>
-        <PackageIconUrl>https://github.com/samunohito/disposable_component/blob/develop/icon.ico</PackageIconUrl>
+        <PackageIconUrl>https://raw.githubusercontent.com/samunohito/disposable_component/develop/icon.ico</PackageIconUrl>
         <PackageTags>IDisposable</PackageTags>
     </PropertyGroup>
 
