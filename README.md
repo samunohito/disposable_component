@@ -36,9 +36,9 @@ disposable.Disposed += (s, e) =>
 disposable.Dispose();
 ```
 
-Just inherit!
-This adds the definition of the IDisposable interface and the IsDisposed property, which can determine if an object has
-been disposed of.
+Just inherit!  
+This adds the definition of the IDisposable interface and the IsDisposed property,   
+which can determine if an object has been disposed of.
 
 ```c#
 public class SampleDisposable : DisposableComponent
