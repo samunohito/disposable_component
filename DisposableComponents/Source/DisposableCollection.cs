@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using DisposableComponents.Internal;
 
@@ -29,7 +30,17 @@ namespace DisposableComponents
         /// <summary>
         /// ctor
         /// </summary>
-        public DisposableCollection() : this(new List<T>())
+        public DisposableCollection() :
+            this(new List<T>(), LockRecursionPolicy.NoRecursion)
+        {
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(LockRecursionPolicy lockRecursionPolicy) :
+            this(new List<T>(), lockRecursionPolicy)
         {
         }
 
@@ -37,7 +48,18 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="capacity">Specify the initial size of the collection</param>
-        public DisposableCollection(int capacity) : this(new List<T>(capacity))
+        public DisposableCollection(int capacity) :
+            this(new List<T>(capacity), LockRecursionPolicy.NoRecursion)
+        {
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="capacity">Specify the initial size of the collection</param>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(int capacity, LockRecursionPolicy lockRecursionPolicy) :
+            this(new List<T>(capacity), lockRecursionPolicy)
         {
         }
 
@@ -45,10 +67,11 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="items">Used to initialize the collection</param>
-        public DisposableCollection(IEnumerable<T> items)
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(IEnumerable<T> items, LockRecursionPolicy lockRecursionPolicy)
         {
             _list = new List<T>(items);
-            _lock = new ReaderWriterLockSlim();
+            _lock = new ReaderWriterLockSlim(lockRecursionPolicy);
             _disposed = false;
         }
 
@@ -210,7 +233,17 @@ namespace DisposableComponents
         /// <summary>
         /// ctor
         /// </summary>
-        public DisposableCollection() : base(new List<IDisposable>())
+        public DisposableCollection() :
+            base()
+        {
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(LockRecursionPolicy lockRecursionPolicy) :
+            base(lockRecursionPolicy)
         {
         }
 
@@ -218,7 +251,28 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="capacity">Specify the initial size of the collection</param>
-        public DisposableCollection(int capacity) : base(capacity)
+        public DisposableCollection(int capacity) :
+            base(capacity)
+        {
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="capacity">Specify the initial size of the collection</param>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(int capacity, LockRecursionPolicy lockRecursionPolicy) :
+            base(capacity, lockRecursionPolicy)
+        {
+        }
+
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="items">Used to initialize the collection</param>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        public DisposableCollection(IEnumerable<IDisposable> items, LockRecursionPolicy lockRecursionPolicy) :
+            base(items, lockRecursionPolicy)
         {
         }
     }
