@@ -8,6 +8,14 @@
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <Authors>samunohito</Authors>
         <RepositoryUrl>https://github.com/samunohito/disposable_component</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Title>DisposableComponent</Title>
+        <Description>Tools for more convenient use of IDisposable interface.</Description>
+        <Copyright>Copyright (c) 2022 samunohito</Copyright>
+        <PackageProjectUrl>https://github.com/samunohito/disposable_component</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/samunohito/disposable_component/blob/develop/LICENSE.md</PackageLicenseUrl>
+        <PackageIconUrl>https://github.com/samunohito/disposable_component/blob/develop/icon.ico</PackageIconUrl>
+        <PackageTags>IDisposable</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
