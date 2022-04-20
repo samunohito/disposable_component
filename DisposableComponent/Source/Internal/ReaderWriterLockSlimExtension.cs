@@ -44,7 +44,7 @@ namespace DisposableComponent.Internal
             }
         }
 
-        public static void WriteLockScope<T1>(this ReaderWriterLockSlim @lock, Action<T1> writer, T1 value)
+        public static void WriteLockScope<T1>(this ReaderWriterLockSlim @lock, T1 value, Action<T1> writer)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace DisposableComponent.Internal
             }
         }
 
-        public static T2 WriteLockScope<T1, T2>(this ReaderWriterLockSlim @lock, Func<T1, T2> writer, T1 value)
+        public static T2 WriteLockScope<T1, T2>(this ReaderWriterLockSlim @lock, T1 value, Func<T1, T2> writer)
         {
             try
             {
