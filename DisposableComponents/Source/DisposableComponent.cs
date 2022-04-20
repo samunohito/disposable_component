@@ -23,9 +23,17 @@ namespace DisposableComponents
         /// <summary>
         /// ctor.
         /// </summary>
-        protected DisposableComponent()
+        protected DisposableComponent() : this(LockRecursionPolicy.NoRecursion)
         {
-            _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        }
+
+        /// <summary>
+        /// ctor.
+        /// </summary>
+        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
+        protected DisposableComponent(LockRecursionPolicy lockRecursionPolicy)
+        {
+            _lock = new ReaderWriterLockSlim(lockRecursionPolicy);
             _disposables = new DisposableCollection();
             IsDisposed = false;
         }
