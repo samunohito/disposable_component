@@ -8,6 +8,10 @@
         <OutputType>Library</OutputType>
 
         <TargetFramework>netcoreapp3.1</TargetFramework>
+
+        <AssemblyName>DisposableComponents.Test</AssemblyName>
+
+        <RootNamespace>DisposableComponents.Test</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DisposableComponent\DisposableComponent.csproj" />
+      <ProjectReference Include="..\DisposableComponents\DisposableComponents.csproj" />
     </ItemGroup>
 
 </Project>

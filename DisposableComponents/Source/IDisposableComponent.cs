@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DisposableComponent
+namespace DisposableComponents
 {
     /// <summary>
     /// Provides an interface for disclosing to the outside world event notifications during the destruction process and

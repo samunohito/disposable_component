@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace DisposableComponent.Internal
+namespace DisposableComponents.Internal
 {
     internal static class ReaderWriterLockSlimExtension
     {
