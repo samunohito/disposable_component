@@ -1,4 +1,4 @@
-# DisposableComponent
+# DisposableComponents
 
 Tools for more convenient use of IDisposable interface.
 
@@ -85,17 +85,17 @@ See NuGet or GitHub for the latest version.
 
 for PackageManager
 ```shell
-Install-Package DisposableComponent -Version 1.0.27
+Install-Package DisposableComponents -Version 1.1.4
 ```
 
 for dotnet
 ```shell
-dotnet add PROJECT package DisposableComponent --version 1.0.27
+dotnet add PROJECT package DisposableComponents --version 1.1.4
 ```
 
 # Licence
 
-"DisposableComponent" is under [MIT license](https://github.com/samunohito/disposable_component/blob/develop/LICENSE.md)
+"DisposableComponents" is under [MIT license](https://github.com/samunohito/disposable_component/blob/develop/LICENSE.md)
 .
 
 # Note
