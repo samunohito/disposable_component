@@ -1,20 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+    <ItemGroup>
+        <None Include="..\icons\trash_128.png" Pack="true" PackagePath="" />
+        <None Include="..\README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+    
     <PropertyGroup>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <PackageId>DisposableComponent</PackageId>
         <OutputType>Library</OutputType>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-        <Authors>samunohito</Authors>
+    </PropertyGroup>
+    <PropertyGroup>
+        <Title>DisposableComponent</Title>
         <RepositoryUrl>https://github.com/samunohito/disposable_component</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <Title>DisposableComponent</Title>
         <Description>Tools for more convenient use of IDisposable interface.</Description>
+        <Authors>samunohito</Authors>
         <Copyright>Copyright (c) 2022 samunohito</Copyright>
-        <PackageProjectUrl>https://github.com/samunohito/disposable_component</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/samunohito/disposable_component/blob/develop/LICENSE.md</PackageLicenseUrl>
-        <PackageIconUrl>https://raw.githubusercontent.com/samunohito/disposable_component/develop/icon.ico</PackageIconUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>trash_128.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>IDisposable</PackageTags>
     </PropertyGroup>
 
