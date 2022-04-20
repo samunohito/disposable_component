@@ -9,7 +9,7 @@ on:
       - develop
 
 env:
-  pathOfVersioning: ${{ github.workspace }}/DisposableComponent
+  pathOfVersioning: ${{ github.workspace }}/DisposableComponents
 
 jobs:
   create-release-pr:
