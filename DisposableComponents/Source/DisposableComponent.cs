@@ -34,7 +34,7 @@ namespace DisposableComponents
         protected DisposableComponent(LockRecursionPolicy lockRecursionPolicy)
         {
             _lock = new ReaderWriterLockSlim(lockRecursionPolicy);
-            _disposables = new DisposableCollection();
+            _disposables = new DisposableCollection(lockRecursionPolicy);
             IsDisposed = false;
         }
 
