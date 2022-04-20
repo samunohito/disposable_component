@@ -50,6 +50,7 @@ public class SampleDisposable : DisposableComponent
         _something = new DummyDisposable();
         
         // If registered to this property, it is destroyed at the same time as the call to Dispose().
+        // This is due to DisposableCollection (see below)
         Disposable.Add(_something);
     }
 
@@ -63,6 +64,19 @@ public class SampleDisposable : DisposableComponent
         // When this object is destroyed (when Dispose() is called), additional processing can be performed.
     }
 }
+```
+
+A DisposableCollection is also available to dispose of multiple registered IDisposables at once.
+
+```c#
+var disposableCollection = new DisposableCollection();
+
+disposableCollection.Add(somethingDisposable1);
+disposableCollection.Add(somethingDisposable2);
+disposableCollection.Add(somethingDisposable3);
+
+// All at once!
+disposableCollection.Dispose();
 ```
 
 # Installation
