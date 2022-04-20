@@ -8,9 +8,11 @@
     <PropertyGroup>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <PackageId>DisposableComponent</PackageId>
+        <PackageId>DisposableComponents</PackageId>
         <OutputType>Library</OutputType>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+        <AssemblyName>DisposableComponents</AssemblyName>
+        <RootNamespace>DisposableComponents</RootNamespace>
     </PropertyGroup>
     <PropertyGroup>
         <Title>DisposableComponent</Title>

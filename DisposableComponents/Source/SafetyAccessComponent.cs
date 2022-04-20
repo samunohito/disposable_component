@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DisposableComponent
+namespace DisposableComponents
 {
     /// <summary>
     /// Extends <see cref="DisposableComponent"/> to provide a mechanism whereby read/write functions can be executed only when the object is not destroyed.

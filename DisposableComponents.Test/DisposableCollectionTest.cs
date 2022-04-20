@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace DisposableComponent.Test
+namespace DisposableComponents.Test
 {
     public class DisposableCollectionTest
     {

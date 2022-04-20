@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using DisposableComponent.Internal;
+using DisposableComponents.Internal;
 
-namespace DisposableComponent
+namespace DisposableComponents
 {
     /// <summary>
     /// This collection can only register objects with the IDisposable interface.
@@ -60,7 +60,7 @@ namespace DisposableComponent
             Dispose(false);
             _lock.Dispose();
         }
-        
+
         /// <summary>
         /// indexer
         /// </summary>

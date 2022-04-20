@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using DisposableComponent.Internal;
+using DisposableComponents.Internal;
 
-namespace DisposableComponent
+namespace DisposableComponents
 {
     /// <summary>
     /// Reference implementation class for <see cref="IDisposableComponent"/>. See Interface for detailed behavior.
