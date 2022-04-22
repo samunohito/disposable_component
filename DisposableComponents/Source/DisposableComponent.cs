@@ -18,7 +18,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="IDisposableComponent.Disposed"/>
         public event EventHandler<DisposableComponentEventArgs> Disposed;
 
-        private readonly object _lock;
+        private readonly object _gate;
         private readonly DisposableCollection _disposables;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace DisposableComponents
         /// </summary>
         protected DisposableComponent()
         {
-            _lock = new object();
+            _gate = new object();
             _disposables = new DisposableCollection();
             IsDisposed = false;
         }
@@ -45,7 +45,7 @@ namespace DisposableComponents
         {
             get
             {
-                lock (_lock)
+                lock (_gate)
                 {
                     return _disposables;
                 }
@@ -100,7 +100,7 @@ namespace DisposableComponents
                 GC.SuppressFinalize(this);
             }
 
-            lock (_lock)
+            lock (_gate)
             {
                 if (IsDisposed)
                 {
