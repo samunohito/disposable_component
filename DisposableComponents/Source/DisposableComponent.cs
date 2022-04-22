@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using DisposableComponents.Internal;
 
@@ -17,31 +18,22 @@ namespace DisposableComponents
         /// <inheritdoc cref="IDisposableComponent.Disposed"/>
         public event EventHandler<DisposableComponentEventArgs> Disposed;
 
-        private readonly ReaderWriterLockSlim _lock;
-        private readonly DisposableCollection<IDisposable> _disposables;
+        private readonly object _lock;
+        private readonly DisposableCollection _disposables;
 
         /// <summary>
         /// ctor.
         /// </summary>
-        protected DisposableComponent() : this(LockRecursionPolicy.NoRecursion)
+        protected DisposableComponent()
         {
-        }
-
-        /// <summary>
-        /// ctor.
-        /// </summary>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        protected DisposableComponent(LockRecursionPolicy lockRecursionPolicy)
-        {
-            _lock = new ReaderWriterLockSlim(lockRecursionPolicy);
-            _disposables = new DisposableCollection(lockRecursionPolicy);
+            _lock = new object();
+            _disposables = new DisposableCollection();
             IsDisposed = false;
         }
 
         ~DisposableComponent()
         {
-            Dispose();
-            _lock.Dispose();
+            Dispose(false);
         }
 
         /// <summary>
@@ -49,7 +41,16 @@ namespace DisposableComponents
         /// IDisposable registered with an ICollection that can be retrieved from this property will be destroyed as soon as
         /// this object's <see cref="Dispose"/> method is called.
         /// </summary>
-        protected ICollection<IDisposable> Disposable => _disposables;
+        protected ICollection<IDisposable> Disposable
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _disposables;
+                }
+            }
+        }
 
         /// <inheritdoc cref="IDisposableComponent.IsDisposed"/>
         public bool IsDisposed { get; private set; }
@@ -83,7 +84,23 @@ namespace DisposableComponents
         /// <inheritdoc cref="IDisposableComponent.Dispose"/>
         public void Dispose()
         {
-            _lock.WriteLockScope(() =>
+            Dispose(true);
+        }
+
+        /// <inheritdoc cref="IDisposableComponent.Dispose"/>
+        void IDisposable.Dispose()
+        {
+            Dispose();
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                GC.SuppressFinalize(this);
+            }
+
+            lock (_lock)
             {
                 if (IsDisposed)
                 {
@@ -99,13 +116,7 @@ namespace DisposableComponents
 
                 OnDisposed();
                 Disposed?.Invoke(this, new DisposableComponentEventArgs(this));
-            });
-        }
-
-        /// <inheritdoc cref="IDisposableComponent.Dispose"/>
-        void IDisposable.Dispose()
-        {
-            Dispose();
+            }
         }
     }
 }

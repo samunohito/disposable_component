@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
-using DisposableComponents.Internal;
+using System.Linq;
 
 namespace DisposableComponents
 {
@@ -12,10 +10,6 @@ namespace DisposableComponents
     /// The collection itself implements the <see cref="IDisposable"/> interface, and by calling <see cref="Dispose()"/>,
     /// registered objects can be destroyed en masse.
     /// </summary>
-    /// <remarks>
-    /// The contents of the following sites were of great help in implementing this class.
-    /// https://stackoverflow.com/a/23446622
-    /// </remarks>
     /// <typeparam name="T">The type must implement or inherit from the <see cref="IDisposable"/> interface</typeparam>
     public class DisposableCollection<T> :
         ICollection<T>,
@@ -23,24 +17,14 @@ namespace DisposableComponents
         IDisposable
         where T : IDisposable
     {
-        private readonly ReaderWriterLockSlim _lock;
+        private readonly object _lock;
         private readonly List<T> _list;
         private bool _disposed;
 
         /// <summary>
         /// ctor
         /// </summary>
-        public DisposableCollection() :
-            this(new List<T>(), LockRecursionPolicy.NoRecursion)
-        {
-        }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(LockRecursionPolicy lockRecursionPolicy) :
-            this(new List<T>(), lockRecursionPolicy)
+        public DisposableCollection() : this(new List<T>())
         {
         }
 
@@ -48,18 +32,7 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="capacity">Specify the initial size of the collection</param>
-        public DisposableCollection(int capacity) :
-            this(new List<T>(capacity), LockRecursionPolicy.NoRecursion)
-        {
-        }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="capacity">Specify the initial size of the collection</param>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(int capacity, LockRecursionPolicy lockRecursionPolicy) :
-            this(new List<T>(capacity), lockRecursionPolicy)
+        public DisposableCollection(int capacity) : this(new List<T>(capacity))
         {
         }
 
@@ -67,11 +40,10 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="items">Used to initialize the collection</param>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(IEnumerable<T> items, LockRecursionPolicy lockRecursionPolicy)
+        public DisposableCollection(IEnumerable<T> items)
         {
             _list = new List<T>(items);
-            _lock = new ReaderWriterLockSlim(lockRecursionPolicy);
+            _lock = new object();
             _disposed = false;
         }
 
@@ -81,7 +53,6 @@ namespace DisposableComponents
         ~DisposableCollection()
         {
             Dispose(false);
-            _lock.Dispose();
         }
 
         /// <summary>
@@ -93,7 +64,10 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.GetEnumerator"/>
         public IEnumerator<T> GetEnumerator()
         {
-            return new ConcurrentEnumerator<T>(_list, _lock);
+            lock (_lock)
+            {
+                return _list.ToList().GetEnumerator();
+            }
         }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
@@ -105,22 +79,22 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.Add"/>
         public void Add(T item)
         {
-            _lock.WriteLockScope(item, it =>
+            lock (_lock)
             {
                 if (_disposed)
                 {
-                    it?.Dispose();
+                    item?.Dispose();
                     return;
                 }
 
-                _list.Add(it);
-            });
+                _list.Add(item);
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.Clear"/>
         public void Clear()
         {
-            _lock.WriteLockScope(() =>
+            lock (_lock)
             {
                 if (_disposed)
                 {
@@ -128,19 +102,22 @@ namespace DisposableComponents
                 }
 
                 _list.Clear();
-            });
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.Contains"/>
         public bool Contains(T item)
         {
-            return _lock.ReadLockScope(() => _disposed ? false : _list.Contains(item));
+            lock (_lock)
+            {
+                return _disposed ? false : _list.Contains(item);
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.CopyTo"/>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            _lock.ReadLockScope(() =>
+            lock (_lock)
             {
                 if (_disposed)
                 {
@@ -148,19 +125,28 @@ namespace DisposableComponents
                 }
 
                 _list.CopyTo(array, arrayIndex);
-            });
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.Remove"/>
         public bool Remove(T item)
         {
-            return _lock.WriteLockScope(item, it => _disposed ? false : _list.Remove(it));
+            lock (_lock)
+            {
+                return _disposed ? false : _list.Remove(item);
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.Count"/>
         public int Count
         {
-            get { return _lock.ReadLockScope(() => _disposed ? 0 : _list.Count); }
+            get
+            {
+                lock (_lock)
+                {
+                    return _disposed ? 0 : _list.Count;
+                }
+            }
         }
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly"/>
@@ -179,49 +165,31 @@ namespace DisposableComponents
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            _lock.WriteLockScope(() =>
+            if (disposing)
+            {
+                GC.SuppressFinalize(this);
+            }
+
+            // Copy for destruction of elements to be implemented later.
+            // Destruction of elements does not need to be locked, so we want to keep them out of WriteLockScope.
+            var list = _list.ToList();
+
+            lock (_lock)
             {
                 if (_disposed)
                 {
                     return;
                 }
 
-                if (disposing)
-                {
-                    GC.SuppressFinalize(this);
-                }
-
-                foreach (var items in _list)
-                {
-                    items.Dispose();
-                }
-
                 _list.Clear();
 
                 _disposed = true;
-            });
-        }
-
-        private class ConcurrentEnumerator<T1> : IEnumerator<T1>
-        {
-            private readonly IEnumerator<T1> _inner;
-            private readonly ReaderWriterLockSlim _lock;
-
-            public ConcurrentEnumerator(IEnumerable<T1> inner, ReaderWriterLockSlim @lock)
-            {
-                _lock = @lock;
-                _inner = inner.GetEnumerator();
             }
 
-            public bool MoveNext() => _inner.MoveNext();
-
-            public void Reset() => _inner.Reset();
-
-            public T1 Current => _inner.Current;
-
-            object IEnumerator.Current => _inner.Current;
-
-            public void Dispose() => _lock.ExitReadLock();
+            foreach (var items in list)
+            {
+                items.Dispose();
+            }
         }
     }
 
@@ -233,17 +201,7 @@ namespace DisposableComponents
         /// <summary>
         /// ctor
         /// </summary>
-        public DisposableCollection() :
-            base()
-        {
-        }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(LockRecursionPolicy lockRecursionPolicy) :
-            base(lockRecursionPolicy)
+        public DisposableCollection()
         {
         }
 
@@ -251,18 +209,7 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="capacity">Specify the initial size of the collection</param>
-        public DisposableCollection(int capacity) :
-            base(capacity)
-        {
-        }
-
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <param name="capacity">Specify the initial size of the collection</param>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(int capacity, LockRecursionPolicy lockRecursionPolicy) :
-            base(capacity, lockRecursionPolicy)
+        public DisposableCollection(int capacity) : base(capacity)
         {
         }
 
@@ -270,9 +217,7 @@ namespace DisposableComponents
         /// ctor
         /// </summary>
         /// <param name="items">Used to initialize the collection</param>
-        /// <param name="lockRecursionPolicy">It is passed to the constructor of ReaderWriterLockSlim used internally</param>
-        public DisposableCollection(IEnumerable<IDisposable> items, LockRecursionPolicy lockRecursionPolicy) :
-            base(items, lockRecursionPolicy)
+        public DisposableCollection(IEnumerable<IDisposable> items) : base(items)
         {
         }
     }
