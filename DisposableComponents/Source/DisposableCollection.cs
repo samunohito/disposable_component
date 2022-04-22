@@ -17,7 +17,7 @@ namespace DisposableComponents
         IDisposable
         where T : IDisposable
     {
-        private readonly object _lock;
+        private readonly object _gate;
         private readonly List<T> _list;
         private bool _disposed;
 
@@ -43,7 +43,7 @@ namespace DisposableComponents
         public DisposableCollection(IEnumerable<T> items)
         {
             _list = new List<T>(items);
-            _lock = new object();
+            _gate = new object();
             _disposed = false;
         }
 
@@ -64,7 +64,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.GetEnumerator"/>
         public IEnumerator<T> GetEnumerator()
         {
-            lock (_lock)
+            lock (_gate)
             {
                 return _list.ToList().GetEnumerator();
             }
@@ -79,7 +79,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.Add"/>
         public void Add(T item)
         {
-            lock (_lock)
+            lock (_gate)
             {
                 if (_disposed)
                 {
@@ -94,7 +94,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.Clear"/>
         public void Clear()
         {
-            lock (_lock)
+            lock (_gate)
             {
                 if (_disposed)
                 {
@@ -108,7 +108,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.Contains"/>
         public bool Contains(T item)
         {
-            lock (_lock)
+            lock (_gate)
             {
                 return _disposed ? false : _list.Contains(item);
             }
@@ -117,7 +117,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.CopyTo"/>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            lock (_lock)
+            lock (_gate)
             {
                 if (_disposed)
                 {
@@ -131,7 +131,7 @@ namespace DisposableComponents
         /// <inheritdoc cref="ICollection{T}.Remove"/>
         public bool Remove(T item)
         {
-            lock (_lock)
+            lock (_gate)
             {
                 return _disposed ? false : _list.Remove(item);
             }
@@ -142,7 +142,7 @@ namespace DisposableComponents
         {
             get
             {
-                lock (_lock)
+                lock (_gate)
                 {
                     return _disposed ? 0 : _list.Count;
                 }
@@ -174,7 +174,7 @@ namespace DisposableComponents
             // Destruction of elements does not need to be locked, so we want to keep them out of WriteLockScope.
             var list = _list.ToList();
 
-            lock (_lock)
+            lock (_gate)
             {
                 if (_disposed)
                 {
